@@ -79,8 +79,7 @@ const patientSchema = new Schema(
             trim: true,
         },
         lastDaigonised:{
-            type: Date // Date type field
-            
+            type: Date            
         },
         location:{
             //string for now,later might add coordinates
@@ -88,6 +87,11 @@ const patientSchema = new Schema(
             required: true,
             lowercase: true,
             trim: true,
+        },
+        symptoms: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'Symptom'
+
         },
         password: {
             type: String,
