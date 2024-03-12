@@ -49,6 +49,7 @@ const patientSchema = new Schema(
             required: true,
             lowercase: true,
             trim: true, 
+            unique: true,
         },
         PhoneNumber: {
             type: String,
@@ -84,7 +85,7 @@ const patientSchema = new Schema(
         location:{
             //string for now,later might add coordinates
             type: String,
-            required: true,
+            required: false,
             lowercase: true,
             trim: true,
         },
