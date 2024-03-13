@@ -6,9 +6,9 @@ const jwt = require("jsonwebtoken")
 const mongoose = require("mongoose")
 
 
-const generateAccessAndRefereshTokens = async(userId) =>{
+const generateAccessAndRefereshTokens = async(patientId) =>{
     try {
-        const patient = await Patient.findById(userId)
+        const patient = await Patient.findById(patientId)
         const accessToken = patient.generateAccessToken()
         const refreshToken = patient.generateRefreshToken()
 
@@ -23,7 +23,7 @@ const generateAccessAndRefereshTokens = async(userId) =>{
     }
 }
 
-const registerUser = asyncHandler( async (req, res) => {
+const registerPatient = asyncHandler( async (req, res) => {
     // get user details from frontend
     // validation - not empty
     // check if user already exists: username, email
@@ -41,12 +41,12 @@ const registerUser = asyncHandler( async (req, res) => {
     
 
     
-    const existedUser = await Patient.findOne({
+    const existedPatient = await Patient.findOne({
         $or: [{ name }, { PhoneNumber }]
     })
     
-    if (existedUser) {
-        throw new ApiError(409, "User with email or username already exists")
+    if (existedPatient) {
+        throw new ApiError(409, "Patient with PhoneNumber or name already exists")
     }
     //console.log(req.files);
 
@@ -64,16 +64,16 @@ const registerUser = asyncHandler( async (req, res) => {
     )
 
     if (!createdPatient) {
-        throw new ApiError(500, "Something went wrong while registering the user")
+        throw new ApiError(500, "Something went wrong while registering the Patient")
     }
 
     return res.status(201).json(
-        new ApiResponse(200, createdUser, "User registered Successfully")
+        new ApiResponse(200, createdPatient, "Patient registered Successfully")
     )
 
 } )
 
-const loginUser = asyncHandler(async (req, res) =>{
+const loginPatient = asyncHandler(async (req, res) =>{
     // req body -> data
     //find the user
     //password check
@@ -84,7 +84,7 @@ const loginUser = asyncHandler(async (req, res) =>{
    
 
     if (!name || !PhoneNumber) {
-        throw new ApiError(400, "username or email is required")
+        throw new ApiError(400, "name or email is required")
     }
 
     const patient = await Patient.findOne({
@@ -92,18 +92,18 @@ const loginUser = asyncHandler(async (req, res) =>{
     })
 
     if (!patient) {
-        throw new ApiError(404, "User does not exist")
+        throw new ApiError(404, "Patient does not exist")
     }
 
    const isPasswordValid = await patient.isPasswordCorrect(password)
 
    if (!isPasswordValid) {
-    throw new ApiError(401, "Invalid user credentials")
+    throw new ApiError(401, "Invalid Patient credentials")
     }
 
    const {accessToken, refreshToken} = await generateAccessAndRefereshTokens(patient._id)
 
-    const loggedInUser = await Patient.findById(patient._id).select("-password -refreshToken")
+    const loggedInPatient = await Patient.findById(patient._id).select("-password -refreshToken")
 
     const options = {
         httpOnly: true,
@@ -118,15 +118,15 @@ const loginUser = asyncHandler(async (req, res) =>{
         new ApiResponse(
             200, 
             {
-                patient: loggedInUser, accessToken, refreshToken
+                patient: loggedInPatient, accessToken, refreshToken
             },
-            "User logged In Successfully"
+            " logged In Successfully"
         )
     )
 
 })
 
-const logoutUser = asyncHandler(async(req, res) => {
+const logoutPatient = asyncHandler(async(req, res) => {
     await Patient.findByIdAndUpdate(
         req.patient._id,
         {
@@ -148,7 +148,7 @@ const logoutUser = asyncHandler(async(req, res) => {
     .status(200)
     .clearCookie("accessToken", options)
     .clearCookie("refreshToken", options)
-    .json(new ApiResponse(200, {}, "User logged Out"))
+    .json(new ApiResponse(200, {}, "Patient logged Out"))
 })
 
 const refreshAccessToken = asyncHandler(async (req, res) => {
@@ -164,13 +164,13 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
             process.env.REFRESH_TOKEN_SECRET
         )
     
-        const user = await User.findById(decodedToken?._id)
+        const patient = await Patient.findById(decodedToken?._id)
     
-        if (!user) {
+        if (!patient) {
             throw new ApiError(401, "Invalid refresh token")
         }
     
-        if (incomingRefreshToken !== user?.refreshToken) {
+        if (incomingRefreshToken !== patient?.refreshToken) {
             throw new ApiError(401, "Refresh token is expired or used")
             
         }
@@ -180,7 +180,7 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
             secure: true
         }
     
-        const {accessToken, newRefreshToken} = await generateAccessAndRefereshTokens(user._id)
+        const {accessToken, newRefreshToken} = await generateAccessAndRefereshTokens(patient._id)
     
         return res
         .status(200)
@@ -211,38 +211,37 @@ const changeCurrentPassword = asyncHandler(async(req, res) => {
         throw new ApiError(400, "Invalid old password")
     }
 
-    user.password = newPassword
-    await user.save({validateBeforeSave: false})
+    patient.password = newPassword
+    await patient.save({validateBeforeSave: false})
 
     return res
     .status(200)
     .json(new ApiResponse(200, {}, "Password changed successfully"))
 })
 
-
-const getCurrentUser = asyncHandler(async(req, res) => {
+const getCurrentPatient = asyncHandler(async(req, res) => {
     return res
     .status(200)
     .json(new ApiResponse(
         200,
-        req.user,
-        "User fetched successfully"
+        req.patient,
+        "patient fetched successfully"
     ))
 })
 
 const updateAccountDetails = asyncHandler(async(req, res) => {
-    const {fullName, email} = req.body
+    const {name, PhoneNumber} = req.body
 
-    if (!fullName || !email) {
+    if (!name || !PhoneNumber) {
         throw new ApiError(400, "All fields are required")
     }
 
-    const user = await User.findByIdAndUpdate(
-        req.user?._id,
+    const patient = await Patient.findByIdAndUpdate(
+        req.patient?._id,
         {
             $set: {
-                fullName,
-                email: email
+                name,
+                PhoneNumber: PhoneNumber
             }
         },
         {new: true}
@@ -251,126 +250,16 @@ const updateAccountDetails = asyncHandler(async(req, res) => {
 
     return res
     .status(200)
-    .json(new ApiResponse(200, user, "Account details updated successfully"))
+    .json(new ApiResponse(200, patient, "Account details updated successfully"))
 });
-
-const updateUserAvatar = asyncHandler(async(req, res) => {
-    const avatarLocalPath = req.file?.path
-
-    if (!avatarLocalPath) {
-        throw new ApiError(400, "Avatar file is missing")
-    }
-
-    //TODO: delete old image - assignment
-
-    const avatar = await uploadOnCloudinary(avatarLocalPath)
-
-    if (!avatar.url) {
-        throw new ApiError(400, "Error while uploading on avatar")
-        
-    }
-
-    const user = await User.findByIdAndUpdate(
-        req.user?._id,
-        {
-            $set:{
-                avatar: avatar.url
-            }
-        },
-        {new: true}
-    ).select("-password")
-
-    return res
-    .status(200)
-    .json(
-        new ApiResponse(200, user, "Avatar image updated successfully")
-    )
-})
-
-
-const getUserChannelProfile = asyncHandler(async(req, res) => {
-    const {username} = req.params
-
-    if (!username?.trim()) {
-        throw new ApiError(400, "username is missing")
-    }
-
-    const channel = await User.aggregate([
-        {
-            $match: {
-                username: username?.toLowerCase()
-            }
-        },
-        {
-            $lookup: {
-                from: "subscriptions",
-                localField: "_id",
-                foreignField: "channel",
-                as: "subscribers"
-            }
-        },
-        {
-            $lookup: {
-                from: "subscriptions",
-                localField: "_id",
-                foreignField: "subscriber",
-                as: "subscribedTo"
-            }
-        },
-        {
-            $addFields: {
-                subscribersCount: {
-                    $size: "$subscribers"
-                },
-                channelsSubscribedToCount: {
-                    $size: "$subscribedTo"
-                },
-                isSubscribed: {
-                    $cond: {
-                        if: {$in: [req.user?._id, "$subscribers.subscriber"]},
-                        then: true,
-                        else: false
-                    }
-                }
-            }
-        },
-        {
-            $project: {
-                fullName: 1,
-                username: 1,
-                subscribersCount: 1,
-                channelsSubscribedToCount: 1,
-                isSubscribed: 1,
-                avatar: 1,
-                coverImage: 1,
-                email: 1
-
-            }
-        }
-    ])
-   
-    if (!channel?.length) {
-        throw new ApiError(404, "channel does not exists")
-    }
-
-    return res
-    .status(200)
-    .json(
-        new ApiResponse(200, channel[0], "User channel fetched successfully")
-    )
-})
 
 
 export {
-    registerUser,
-    loginUser,
-    logoutUser,
+    registerPatient,
+    loginPatient,
+    logoutPatient,
     refreshAccessToken,
     changeCurrentPassword,
-    getCurrentUser,
+    getCurrentPatient,
     updateAccountDetails,
-    updateUserAvatar,
-    updateUserCoverImage,
-    getUserChannelProfile,
-    getWatchHistory
 }

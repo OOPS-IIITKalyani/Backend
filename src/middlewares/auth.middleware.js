@@ -15,14 +15,14 @@ const { Patient } = require("../models/patient.model");
     
         const decodedToken = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET)
     
-        const user = await Patient.findById(decodedToken?._id).select("-password -refreshToken")
+        const patient = await Patient.findById(decodedToken?._id).select("-password -refreshToken")
     
-        if (!user) {
+        if (!patient) {
             
             throw new ApiError(401, "Invalid Access Token")
         }
     
-        req.user = user;
+        req.patient = patient;
         next()
     } catch (error) {
         throw new ApiError(401, error?.message || "Invalid access token")

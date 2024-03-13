@@ -123,8 +123,8 @@ patientSchema.methods.generateAccessToken = function(){
     return jwt.sign(
         {
             _id: this._id,
-            email: this.email,
-            username: this.name,
+            PhoneNumber: this.PhoneNumber,
+            name: this.name,
         },
         process.env.ACCESS_TOKEN_SECRET,
         {
