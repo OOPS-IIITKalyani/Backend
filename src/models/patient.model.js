@@ -62,14 +62,14 @@ const patientSchema = new Schema(
         dateOfBirth: DateOfBirthSchema,
         exisitingConditions: {
             type: [String],
-            required: False,
+            required: false,
             lowercase: true,
             trim: true,
         },
         healthReports: {
             //for now we assume that the health report is a string(url)
             type: [String],
-            required: False,
+            required: false,
             lowercase: true,
             trim: true,
         },

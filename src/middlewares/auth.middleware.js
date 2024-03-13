@@ -1,7 +1,8 @@
 const jwt = require("jsonwebtoken");
 const ApiError = require("../utils/ApiError");
-const { asyncHandler } = require("../utils/asyncHandler");
-const { Patient } = require("../models/patient.model");
+
+const  asyncHandler  = require("../utils/asyncHandler");
+const  Patient  = require("../models/patient.model");
 
 
  const verifyJWT = asyncHandler(async(req, _, next) => {

@@ -8,7 +8,7 @@ const {
     changeCurrentPassword,
     getCurrentPatient,
     updateAccountDetails,
-} = require('../controllers/user.controller.js');
+} = require('../controllers/patient.controller.js');
 
 const { verifyJWT } = require('../middlewares/auth.middleware.js');
 const router = express.Router();

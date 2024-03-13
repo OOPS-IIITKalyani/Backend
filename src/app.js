@@ -17,7 +17,7 @@ app.use(cookieParser())
 
 //routes import
 
-const userRouter = require("./routes/user.routes.js")
+const userRouter = require("./routes/patient.routes.js")
 const healthcheckRouter = require("./routes/healthcheck.routes.js")
 
 
