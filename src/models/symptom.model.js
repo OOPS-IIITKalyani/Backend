@@ -4,6 +4,7 @@ const { Schema } = mongoose;
 
 const symptomSchema = new mongoose.Schema({
   //to ask about the entry into the database if there is a specific format
+  
     name: {
     type: String,
     required: true,

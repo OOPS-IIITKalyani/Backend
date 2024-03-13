@@ -1,6 +1,6 @@
 const asyncHandler= require("../utils/asyncHandler")
 const ApiError = require("../utils/ApiError")
-const { User} = require("../models/user.model")
+const { Patient } = require("../models/patient.model")
 const ApiResponse = require("../utils/ApiResponse")
 const jwt = require("jsonwebtoken")
 const mongoose = require("mongoose")
@@ -8,12 +8,12 @@ const mongoose = require("mongoose")
 
 const generateAccessAndRefereshTokens = async(userId) =>{
     try {
-        const user = await User.findById(userId)
-        const accessToken = user.generateAccessToken()
-        const refreshToken = user.generateRefreshToken()
+        const patient = await Patient.findById(userId)
+        const accessToken = patient.generateAccessToken()
+        const refreshToken = patient.generateRefreshToken()
 
-        user.refreshToken = refreshToken
-        await user.save({ validateBeforeSave: false })
+        patient.refreshToken = refreshToken
+        await patient.save({ validateBeforeSave: false })
 
         return {accessToken, refreshToken}
 
@@ -41,7 +41,7 @@ const registerUser = asyncHandler( async (req, res) => {
     
 
     
-    const existedUser = await User.findOne({
+    const existedUser = await Patient.findOne({
         $or: [{ name }, { PhoneNumber }]
     })
     
@@ -52,18 +52,18 @@ const registerUser = asyncHandler( async (req, res) => {
 
    
    
-    const user = await User.create({
+    const patient = await Patient.create({
         name,
         PhoneNumber,
         Genser,
         password,
     })
 
-    const createdUser = await User.findById(user._id).select(
+    const createdPatient = await Patient.findById(patient._id).select(
         "-password -refreshToken"
     )
 
-    if (!createdUser) {
+    if (!createdPatient) {
         throw new ApiError(500, "Something went wrong while registering the user")
     }
 
@@ -75,42 +75,35 @@ const registerUser = asyncHandler( async (req, res) => {
 
 const loginUser = asyncHandler(async (req, res) =>{
     // req body -> data
-    // username or email
     //find the user
     //password check
     //access and referesh token
     //send cookie
 
-    const {email, username, password} = req.body
+    const {name,PhoneNumber,password} = req.body
    
 
-    if (!username && !email) {
+    if (!name || !PhoneNumber) {
         throw new ApiError(400, "username or email is required")
     }
-    
-    // Here is an alternative of above code based on logic discussed in video:
-    // if (!(username || email)) {
-    //     throw new ApiError(400, "username or email is required")
-        
-    // }
 
-    const user = await User.findOne({
-        $or: [{username}, {email}]
+    const patient = await Patient.findOne({
+        $or: [{name}, {PhoneNumber}]
     })
 
-    if (!user) {
+    if (!patient) {
         throw new ApiError(404, "User does not exist")
     }
 
-   const isPasswordValid = await user.isPasswordCorrect(password)
+   const isPasswordValid = await patient.isPasswordCorrect(password)
 
    if (!isPasswordValid) {
     throw new ApiError(401, "Invalid user credentials")
     }
 
-   const {accessToken, refreshToken} = await generateAccessAndRefereshTokens(user._id)
+   const {accessToken, refreshToken} = await generateAccessAndRefereshTokens(patient._id)
 
-    const loggedInUser = await User.findById(user._id).select("-password -refreshToken")
+    const loggedInUser = await Patient.findById(patient._id).select("-password -refreshToken")
 
     const options = {
         httpOnly: true,
@@ -125,7 +118,7 @@ const loginUser = asyncHandler(async (req, res) =>{
         new ApiResponse(
             200, 
             {
-                user: loggedInUser, accessToken, refreshToken
+                patient: loggedInUser, accessToken, refreshToken
             },
             "User logged In Successfully"
         )
@@ -134,8 +127,8 @@ const loginUser = asyncHandler(async (req, res) =>{
 })
 
 const logoutUser = asyncHandler(async(req, res) => {
-    await User.findByIdAndUpdate(
-        req.user._id,
+    await Patient.findByIdAndUpdate(
+        req.patient._id,
         {
             $unset: {
                 refreshToken: 1 // this removes the field from document
@@ -211,8 +204,8 @@ const changeCurrentPassword = asyncHandler(async(req, res) => {
 
     
 
-    const user = await User.findById(req.user?._id)
-    const isPasswordCorrect = await user.isPasswordCorrect(oldPassword)
+    const patient= await Patient.findById(req.patient?._id)
+    const isPasswordCorrect = await patient.isPasswordCorrect(oldPassword)
 
     if (!isPasswordCorrect) {
         throw new ApiError(400, "Invalid old password")
