@@ -17,9 +17,13 @@ app.use(cookieParser())
 
 //routes import
 
+const userRouter = require("./routes/user.routes.js")
+const healthcheckRouter = require("./routes/healthcheck.routes.js")
+
 
 //routes declaration
-
+app.use("/api/v1/healthcheck", healthcheckRouter)
+app.use("/api/v1/users", userRouter)
 
 // http://localhost:8000/api/v1/users/register
 

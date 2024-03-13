@@ -253,8 +253,7 @@ const updateAccountDetails = asyncHandler(async(req, res) => {
     .json(new ApiResponse(200, patient, "Account details updated successfully"))
 });
 
-
-export {
+module.exports = {
     registerPatient,
     loginPatient,
     logoutPatient,
