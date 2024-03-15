@@ -1,6 +1,6 @@
 const asyncHandler= require("../utils/asyncHandler")
 const ApiError = require("../utils/ApiError")
-const { Patient } = require("../models/patient.model")
+const  Patient  = require("../models/patient.model")
 const ApiResponse = require("../utils/ApiResponse")
 const jwt = require("jsonwebtoken")
 const mongoose = require("mongoose")
