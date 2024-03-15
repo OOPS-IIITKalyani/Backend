@@ -33,12 +33,18 @@ const registerPatient = asyncHandler( async (req, res) => {
     // return res
 
 
-    const {name,PhoneNumber,Genser, password } = req.body
-    if ([name,PhoneNumber,Genser, password].some((field) => field?.trim() === "")) 
-    {
-        throw new ApiError(400, "All fields are required")
-    }
-    
+
+const { name, PhoneNumber, Genser, password } = req.body;
+console.log("Received request body:", req.body);
+const requiredFields = ['name', 'PhoneNumber', 'Genser', 'password'];
+const missingFields = requiredFields.filter(field => !req.body[field] || req.body[field].trim() === "");
+console.log(missingFields);
+if (missingFields.length > 0) {
+    throw new ApiError(400, `Missing required fields: ${missingFields.join(', ')}`);
+}
+
+// Now you can proceed with creating the Patient
+
 
     
     const existedPatient = await Patient.findOne({
