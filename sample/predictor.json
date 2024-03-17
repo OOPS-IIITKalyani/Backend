@@ -1,0 +1,15 @@
+[
+    {
+      "name": "kin_rash",
+      "description": "blablabla",
+      "severity": 2,
+      "duration": "Temporary"
+    },
+    {
+      "name": "itching",
+      "description": "blablabla",
+      "severity": 3,
+      "duration": "Permanent"
+    }
+  ]
+  
