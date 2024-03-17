@@ -1,0 +1,15 @@
+ok ill need another sprint 
+till now done  
+- getting the json symptoms
+- Trimming unnecesary feilds
+- loading the one of symptoms and making a hashmap
+- reading the csv header and then convering into a set
+- using the set to go trough array of symptom and make its specific vector (only the reduced columns are considered)
+
+todos
+- intergate the one ofs
+- make a function that reads all the diseases one by one and then return the most probable diseases with symptoms match
+- integrate off of symptoms
+- better the code
+
+and just figure out a better workflow + better code
