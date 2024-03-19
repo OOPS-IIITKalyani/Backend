@@ -7,7 +7,7 @@ till now done
 - using the set to go trough array of symptom and make its specific vector (only the reduced columns are considered)
 
 todos
-- intergate the one ofs
+
 - make a function that reads all the diseases one by one and then return the most probable diseases with symptoms match
 - integrate off of symptoms
 - better the code

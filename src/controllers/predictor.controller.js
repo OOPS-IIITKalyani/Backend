@@ -2,7 +2,7 @@ const asyncHandler= require("../utils/asyncHandler")
 const ApiError = require("../utils/ApiError")
   
 const fs = require('fs');
-const csv = require('csv-parser'); // You need to install this package
+const csv = require('csv-parser');
 const readline = require('readline');
 
 function loadCSVFile(filePath) {
@@ -84,6 +84,7 @@ async function csvHeaderToMap(filePath) {
         // Only process the first line
         if (lineNumber === 0) {
             const headers = line.split(',');
+            console.log('Headers:', headers);
             headers.forEach((header, index) => {
                 headerMap.set(header.trim(), index);
             });
@@ -105,7 +106,8 @@ async function findSerialNumberForHeader(filePath) {
 
 async function processArray(filePath, array) {
     const headerMap = await findSerialNumberForHeader(filePath);
-    let result = new Array(52).fill(0);
+    //remeber to change this according to the number of symptoms
+    let result = new Array(51).fill(0);
     for (let i = 0; i < array.length; i++) {
         let serial = headerMap.get(array[i]);
         if (serial !== undefined) {
@@ -117,7 +119,50 @@ async function processArray(filePath, array) {
 
 // Usage
 processArray('../../data/dataset.csv', ['itching', 'skin_rash'])
-    .then(result => console.log(result))
+    .then(result => console.log('result',result.length, result))
     .catch(err => console.error(err));
 
 //findSerialNumberForHeader('../../data/dataset.csv', 'itching')
+
+
+async function loadCSVFile(filePath, vectorToCompare) {
+    const fileStream = fs.createReadStream(filePath);
+
+    const rl = readline.createInterface({
+        input: fileStream,
+        crlfDelay: Infinity
+    });
+
+    let data = [];
+    let scores=[];
+    let diseases = [];
+    let isFirstLine = true;
+
+    rl.on('line', (line) => {
+        if (isFirstLine) {
+            isFirstLine = false;
+        } else {
+            const row = line.split(',');
+            const firstElement = row.shift();
+            diseases.push(firstElement); 
+            // console.log('First element:', firstElement);
+            // console.log('Remaining elements:', row);
+            console.log('Row size:', row.length);
+            console.log(row);
+            // const disease = row.pop();
+            // diseases.push(disease);
+            // data.push(row);
+            // console.log('disease:', disease);
+        }
+    });
+
+    // rl.on('close', () => {
+    //     data.forEach(row => {
+    //         if (JSON.stringify(row) === JSON.stringify(vectorToCompare)) {
+    //             console.log('Match found:', row);
+    //         }
+    //     });
+    // });
+}
+
+loadCSVFile('../../data/dataset_copy.csv', [1, 0, 1]).then(result => console.log(result)).catch(err => console.error(err));
