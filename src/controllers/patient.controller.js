@@ -61,7 +61,7 @@ if (missingFields.length > 0) {
     const patient = await Patient.create({
         name,
         PhoneNumber,
-        Gener,
+        gender,
         password,
     })
 
