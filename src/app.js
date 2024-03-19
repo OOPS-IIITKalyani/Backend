@@ -19,11 +19,12 @@ app.use(cookieParser())
 
 const userRouter = require("./routes/patient.routes.js")
 const healthcheckRouter = require("./routes/healthcheck.routes.js")
-
+const predictionRouter = require("./routes/predictor.routes.js")
 
 //routes declaration
 app.use("/api/v1/healthcheck", healthcheckRouter)
 app.use("/api/v1/users", userRouter)
+app.use("/api/v1/predict", predictionRouter)
 
 // http://localhost:8000/api/v1/users/register
 
