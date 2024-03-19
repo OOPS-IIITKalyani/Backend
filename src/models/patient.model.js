@@ -73,7 +73,7 @@ const patientSchema = new Schema(
             lowercase: true,
             trim: true,
         },
-        Genser:{
+        gender:{
             type: String,
             required: true,
             lowercase: true,

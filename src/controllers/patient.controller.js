@@ -34,9 +34,9 @@ const registerPatient = asyncHandler( async (req, res) => {
 
 
 
-const { name, PhoneNumber, Genser, password } = req.body;
+const { name, PhoneNumber, gender, password } = req.body;
 console.log("Received request body:", req.body);
-const requiredFields = ['name', 'PhoneNumber', 'Genser', 'password'];
+const requiredFields = ['name', 'PhoneNumber', 'gender', 'password'];
 const missingFields = requiredFields.filter(field => !req.body[field] || req.body[field].trim() === "");
 console.log(missingFields);
 if (missingFields.length > 0) {
@@ -61,7 +61,7 @@ if (missingFields.length > 0) {
     const patient = await Patient.create({
         name,
         PhoneNumber,
-        Genser,
+        Gener,
         password,
     })
 

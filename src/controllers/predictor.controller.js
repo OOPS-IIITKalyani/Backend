@@ -31,11 +31,26 @@ function extractNamesFromJSON(jsonInput) {
       return [];
     }
   }
+function countMatches(arr1, arr2) {
+    if (arr1.length !== arr2.length) {
+        throw new Error('Both arrays should have the same length');
+    }
+
+    let matches = 0;
+
+    for (let i = 0; i < arr1.length; i++) {
+        if (arr1[i] === arr2[i]) {
+            matches++;
+        }
+    }
+
+    return matches;
+}
 //   // Example usage:
 //   const jsonInput = `
 //   [
 //     {
-//       "name": "kin_rash",
+//       "name": "skin_rash",
 //       "description": "blablabla",
 //       "severity": 2,
 //       "duration": "Temporary"
@@ -52,7 +67,7 @@ function extractNamesFromJSON(jsonInput) {
 //   const namesArray = extractNamesFromJSON(jsonInput);
 //   console.log(namesArray);
   
-  function jsonToHashMap(filePath) {
+async function jsonToHashMap(filePath) {
     try {
         const data = fs.readFileSync(filePath, 'utf8');
         const json = JSON.parse(data);
@@ -84,7 +99,7 @@ async function csvHeaderToMap(filePath) {
         // Only process the first line
         if (lineNumber === 0) {
             const headers = line.split(',');
-            console.log('Headers:', headers);
+            // console.log('Headers:', headers);
             headers.forEach((header, index) => {
                 headerMap.set(header.trim(), index);
             });
@@ -94,8 +109,6 @@ async function csvHeaderToMap(filePath) {
 
     return headerMap;
 }
-
-
 async function findSerialNumberForHeader(filePath) {
     const headerMap = await csvHeaderToMap(filePath);
     if (!headerMap) {
@@ -103,7 +116,6 @@ async function findSerialNumberForHeader(filePath) {
     }
     return headerMap;
 }
-
 async function processArray(filePath, array) {
     const headerMap = await findSerialNumberForHeader(filePath);
     //remeber to change this according to the number of symptoms
@@ -117,14 +129,11 @@ async function processArray(filePath, array) {
     return result;
 }
 
-// Usage
-processArray('../../data/dataset.csv', ['itching', 'skin_rash'])
-    .then(result => console.log('result',result.length, result))
-    .catch(err => console.error(err));
+// processArray('../../data/dataset.csv', ['itching', 'skin_rash'])
+//     .then(result => console.log('array processed'))
+//     .catch(err => console.error(err));
 
 //findSerialNumberForHeader('../../data/dataset.csv', 'itching')
-
-
 async function loadCSVFile(filePath, vectorToCompare) {
     const fileStream = fs.createReadStream(filePath);
 
@@ -145,24 +154,24 @@ async function loadCSVFile(filePath, vectorToCompare) {
             const row = line.split(',');
             const firstElement = row.shift();
             diseases.push(firstElement); 
-            // console.log('First element:', firstElement);
-            // console.log('Remaining elements:', row);
-            console.log('Row size:', row.length);
-            console.log(row);
-            // const disease = row.pop();
-            // diseases.push(disease);
-            // data.push(row);
-            // console.log('disease:', disease);
+            const numbers = row.map(element => parseFloat(element));
+            data.push(numbers);
         }
     });
+    rl.on('close', () => {
+        data.forEach(row => {
+            scores.push(countMatches(row, vectorToCompare));
+        });
+        // console.log('diseases', diseases);
+        // console.log('data', data);
+        callback(scores);
+        console.log('scores', scores);
+    });
 
-    // rl.on('close', () => {
-    //     data.forEach(row => {
-    //         if (JSON.stringify(row) === JSON.stringify(vectorToCompare)) {
-    //             console.log('Match found:', row);
-    //         }
-    //     });
-    // });
+    rl.on('error', (err) => {
+        reject(err);
+    });
+
 }
 
-loadCSVFile('../../data/dataset_copy.csv', [1, 0, 1]).then(result => console.log(result)).catch(err => console.error(err));
+loadCSVFile('../../data/dataset.csv', [1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]).then(result => console.log('csvfilestuff',result)).catch(err => console.error(err));
