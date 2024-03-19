@@ -1,10 +1,29 @@
 const asyncHandler= require("../utils/asyncHandler")
 const ApiError = require("../utils/ApiError")
-  
 const fs = require('fs');
 const csv = require('csv-parser');
 const readline = require('readline');
 
+
+function getTopDiseases(values, diseases) {
+    if (values.length !== diseases.length) {
+        throw new Error('Both arrays should have the same length');
+    }
+
+    // Create an array of indices [0, 1, 2, ..., N-1]
+    let indices = Array.from({length: values.length}, (_, i) => i);
+
+    // Sort the indices array by the corresponding values in descending order
+    indices.sort((a, b) => values[b] - values[a]);
+
+    // Get the top 4 indices
+    let topIndices = indices.slice(0, 4);
+
+    // Map the indices to the corresponding diseases
+    let topDiseases = topIndices.map(i => diseases[i]);
+
+    return topDiseases;
+}
 function loadCSVFile(filePath) {
     const data = [];
     fs.createReadStream(filePath)
@@ -135,43 +154,45 @@ async function processArray(filePath, array) {
 
 //findSerialNumberForHeader('../../data/dataset.csv', 'itching')
 async function loadCSVFile(filePath, vectorToCompare) {
-    const fileStream = fs.createReadStream(filePath);
+    return new Promise((resolve, reject) => {
+        const fileStream = fs.createReadStream(filePath);
 
-    const rl = readline.createInterface({
-        input: fileStream,
-        crlfDelay: Infinity
-    });
-
-    let data = [];
-    let scores=[];
-    let diseases = [];
-    let isFirstLine = true;
-
-    rl.on('line', (line) => {
-        if (isFirstLine) {
-            isFirstLine = false;
-        } else {
-            const row = line.split(',');
-            const firstElement = row.shift();
-            diseases.push(firstElement); 
-            const numbers = row.map(element => parseFloat(element));
-            data.push(numbers);
-        }
-    });
-    rl.on('close', () => {
-        data.forEach(row => {
-            scores.push(countMatches(row, vectorToCompare));
+        const rl = readline.createInterface({
+            input: fileStream,
+            crlfDelay: Infinity
         });
-        // console.log('diseases', diseases);
-        // console.log('data', data);
-        callback(scores);
-        console.log('scores', scores);
-    });
 
-    rl.on('error', (err) => {
-        reject(err);
-    });
+        let data = [];
+        let scores = [];
+        let diseases = [];
+        let isFirstLine = true;
 
+        rl.on('line', (line) => {
+            if (isFirstLine) {
+                isFirstLine = false;
+            } else {
+                const row = line.split(',');
+                const firstElement = row.shift();
+                diseases.push(firstElement);
+                const numbers = row.map(element => parseFloat(element));
+                data.push(numbers);
+            }
+        });
+
+        rl.on('close', () => {
+            data.forEach(row => {
+                scores.push(countMatches(row, vectorToCompare));
+            });
+            const result = getTopDiseases(scores, diseases);
+            resolve(result);
+        });
+
+        rl.on('error', (err) => {
+            reject(err);
+        });
+    });
 }
 
-loadCSVFile('../../data/dataset.csv', [1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]).then(result => console.log('csvfilestuff',result)).catch(err => console.error(err));
+loadCSVFile('../../data/dataset.csv', [1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0])
+.then(result => console.log('csvfilestuff',result))
+.catch(err => console.error(err));
