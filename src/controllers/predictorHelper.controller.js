@@ -9,18 +9,24 @@ function getTopDiseases(values, diseases) {
     if (values.length !== diseases.length) {
         throw new Error('Both arrays should have the same length');
     }
-
     // Create an array of indices [0, 1, 2, ..., N-1]
     let indices = Array.from({length: values.length}, (_, i) => i);
 
     // Sort the indices array by the corresponding values in descending order
-    indices.sort((a, b) => values[b] - values[a]);
+    indices.sort((a, b) => {
+        let percentageA = values[a][0] / values[a][1];
+        let percentageB = values[b][0] / values[b][1];
+        if (percentageA === percentageB) {
+            return values[b][0] - values[a][0];
+        }
+        return percentageB - percentageA;
+    });
 
     // Get the top 4 indices
     let topIndices = indices.slice(0, 4);
 
     // Map the indices to the corresponding diseases
-    let topDiseases = topIndices.map(i => diseases[i]);
+    let topDiseases = topIndices.map(i => [diseases[i], values[i][0] / values[i][1]]);
 
     return topDiseases;
 }
@@ -55,15 +61,18 @@ function countMatches(arr1, arr2) {
         throw new Error('Both arrays should have the same length');
     }
 
+    let totalMatches = 0;
     let matches = 0;
-
     for (let i = 0; i < arr1.length; i++) {
-        if (arr1[i] === arr2[i]) {
-            matches++;
+        if (arr1[i] === 1) {
+            if (arr1[i] === arr2[i]) {
+                matches++;
+            }
+            totalMatches++;
         }
     }
 
-    return matches;
+    return [matches, totalMatches];
 }
 //   // Example usage:
 //   const jsonInput = `
