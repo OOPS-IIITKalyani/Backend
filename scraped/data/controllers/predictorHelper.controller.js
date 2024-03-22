@@ -1,5 +1,5 @@
-const asyncHandler= require("../utils/asyncHandler")
-const ApiError = require("../utils/ApiError")
+const asyncHandler= require("../../../src/utils/asyncHandler")
+const ApiError = require("../../../src/utils/ApiError")
 const fs = require('fs');
 const csv = require('csv-parser');
 const readline = require('readline');

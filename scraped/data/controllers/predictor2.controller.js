@@ -1,5 +1,5 @@
-const asyncHandler= require("../utils/asyncHandler")
-const ApiError = require("../utils/ApiError")
+const asyncHandler= require("../../../src/utils/asyncHandler")
+const ApiError = require("../../../src/utils/ApiError")
 const fs = require('fs');
 const csv = require('csv-parser');
 const readline = require('readline');
@@ -23,7 +23,7 @@ const {
     CSVFileFinale
 }=require("./predictorHelper.controller");
 
-const predictDisease = asyncHandler(async (req, res) => {
+const predictDisease2 = asyncHandler(async (req, res) => {
     const { symptoms } = req.body;
     if (!symptoms) {
         return next(new ApiError(400, "Symptoms are required"));
@@ -37,5 +37,5 @@ const predictDisease = asyncHandler(async (req, res) => {
 });
 
 module.exports = {
-    predictDisease
+    predictDisease2
 }
