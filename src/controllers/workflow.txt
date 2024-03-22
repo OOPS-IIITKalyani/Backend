@@ -1,17 +1,9 @@
-ok ill need another sprint 
-till now done  
-- getting the json symptoms
-- Trimming unnecesary feilds
-- loading the one of symptoms and making a hashmap
-- reading the csv header and then convering into a set
-- using the set to go trough array of symptom and make its specific vector (only the reduced columns are considered)
-- make a function that reads all the diseases one by one and then return the most probable diseases with symptoms match
+new workflow ppl
 
-todos
-- write the route 
+- take the input 
+- then make a unquie set os symotoms from it
+-
 
-
-
-and just figure out a better workflow + better code
-
-1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+- they have a function that goes through the user array and find out no of matches between the target diaeases and the array (easy)
+-  that takes a String parameter newOption, which represents a new option to be added to a JSON file containing an array of options. 
+- updates a JSON file with new disease information
