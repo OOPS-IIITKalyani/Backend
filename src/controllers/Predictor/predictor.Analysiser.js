@@ -1,28 +1,20 @@
 const fs = require('fs');
 
 function analyzeUserSymptoms(userSymptoms, age) {
-    let filePath;
+    let filePath="./new.json";
 
     if (age === 0) {
-        filePath = "../../Data/upto2months.json";
+        filePath = "/Users/tamaghnachoudhuri/Desktop/Webcode/Backend/src/Data/upto2months.json";
     } else if (age === 1) {
-        filePath = "../../Data/2monthsTo5Years.json";
+        filePath = "/Users/tamaghnachoudhuri/Desktop/Webcode/Backend/src/Data/upto2months.json";
     } else {
-        filePath = "../../Data/data.json";
+        filePath = "/Users/tamaghnachoudhuri/Desktop/Webcode/Backend/src/Data/data.json";
     }
-    fs.access(filePath, fs.constants.F_OK, (err) => {
-        if (err) {
-            console.error(`Cannot access file at ${filePath}`);
-        } else {
-            console.log(`File at ${filePath} is being loaded`);
-            // Continue with your file processing here
-        }
-    });
+
     try {
         // Read the JSON file
         let data = fs.readFileSync(filePath);
         let diseases = JSON.parse(data);
-
         // Initialize disease scores map
         let diseaseScores = {};
 
@@ -33,7 +25,6 @@ function analyzeUserSymptoms(userSymptoms, age) {
             let diseaseSymptoms = disease.Symptoms;
 
             let output = matchSymptoms(diseaseName, diseaseSymptoms, userSymptoms);
-
             if (output.probability > 0) {
                 diseaseScores[output.diseaseName] = [output.probability, precaution, diseaseSymptoms];
             }
@@ -73,7 +64,12 @@ function matchSymptoms(diseaseName, diseaseSymptoms, userSymptoms) {
 }
 
 // Example usage:
-let userSymptoms = ["Fever", "Cough", "Headache"];
+let userSymptoms = [ "vomiting",
+"headache",
+"nausea",
+"spinning movements",
+"loss of balance",
+"unsteadiness"];
 let age = 10;
 
 try {
