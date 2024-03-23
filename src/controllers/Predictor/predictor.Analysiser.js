@@ -63,18 +63,6 @@ function matchSymptoms(diseaseName, diseaseSymptoms, userSymptoms) {
     };
 }
 
-// Example usage:
-let userSymptoms = [ "vomiting",
-"headache",
-"nausea",
-"spinning movements",
-"loss of balance",
-"unsteadiness"];
-let age = 10;
-
-try {
-    let result = analyzeUserSymptoms(userSymptoms, age);
-    console.log(result);
-} catch (error) {
-    console.error(error.message);
-}
+module.exports = {
+    analyzeUserSymptoms,
+};
