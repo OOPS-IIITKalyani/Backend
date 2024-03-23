@@ -1,7 +1,6 @@
 const { analyzeUserSymptoms} = require('../controllers/Predictor/predictor.Analysiser');
 const asyncHandler= require("../utils/asyncHandler")
 const ApiError = require("../utils/ApiError")
-const  Patient  = require("../models/patient.model")
 const ApiResponse = require("../utils/ApiResponse")
 
 
@@ -10,7 +9,7 @@ const Predictor = asyncHandler(async (req, res,) => {
         const { userSymptoms, age } = req.body;
 
         if (!userSymptoms || !age) {
-            throw new ApiError('User symptoms and age are required', 400);
+            throw new ApiError(400,'User symptoms and age are required');
         }
         const result = analyzeUserSymptoms(userSymptoms, age);
         res.status(200).json(result);

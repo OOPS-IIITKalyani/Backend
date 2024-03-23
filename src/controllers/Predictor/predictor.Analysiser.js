@@ -4,13 +4,13 @@ function analyzeUserSymptoms(userSymptoms, age) {
     let filePath="./new.json";
 
     if (age === 0) {
-        filePath = "/Users/tamaghnachoudhuri/Desktop/Webcode/Backend/src/Data/upto2months.json";
+        filePath = __dirname +  "/../../Data/upto2months.json";
     } else if (age === 1) {
-        filePath = "/Users/tamaghnachoudhuri/Desktop/Webcode/Backend/src/Data/upto2months.json";
-    } else {
-        filePath = "/Users/tamaghnachoudhuri/Desktop/Webcode/Backend/src/Data/data.json";
+        filePath = __dirname +  "/../../Data/2monthsTo5Years.json";
     }
-
+    else {
+        filePath = __dirname +  "/../../Data/data.json";
+    }
     try {
         // Read the JSON file
         let data = fs.readFileSync(filePath);
