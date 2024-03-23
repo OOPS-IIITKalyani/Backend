@@ -26,7 +26,7 @@ function analyzeUserSymptoms(userSymptoms, age) {
 
             let output = matchSymptoms(diseaseName, diseaseSymptoms, userSymptoms);
             if (output.probability > 0) {
-                diseaseScores[output.diseaseName] = [output.probability, precaution, diseaseSymptoms];
+                diseaseScores[output.diseaseName] = [output.probability, precaution];
             }
         });
 
@@ -38,7 +38,7 @@ function analyzeUserSymptoms(userSymptoms, age) {
         // Sort disease scores by probability
         let sortedScores = Object.entries(diseaseScores)
             .sort((a, b) => b[1][0] - a[1][0])
-            .slice(0, 7); // Take top 7 diseases
+            .slice(0, 5); // Take top 7 diseases
 
         return Object.fromEntries(sortedScores);
     } catch (error) {
