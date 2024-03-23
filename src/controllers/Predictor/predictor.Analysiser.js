@@ -26,6 +26,7 @@ function analyzeUserSymptoms(userSymptoms, age) {
 
             let output = matchSymptoms(diseaseName, diseaseSymptoms, userSymptoms);
             if (output.probability > 0) {
+                
                 diseaseScores[output.diseaseName] = [output.probability, precaution];
             }
         });
