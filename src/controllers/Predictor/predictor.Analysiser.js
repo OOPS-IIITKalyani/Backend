@@ -4,13 +4,20 @@ function analyzeUserSymptoms(userSymptoms, age) {
     let filePath;
 
     if (age === 0) {
-        filePath = "data/upto2months.json";
+        filePath = "../../Data/upto2months.json";
     } else if (age === 1) {
-        filePath = "data/2monthsTo5Years.json";
+        filePath = "../../Data/2monthsTo5Years.json";
     } else {
-        filePath = "data/data.json";
+        filePath = "../../Data/data.json";
     }
-
+    fs.access(filePath, fs.constants.F_OK, (err) => {
+        if (err) {
+            console.error(`Cannot access file at ${filePath}`);
+        } else {
+            console.log(`File at ${filePath} is being loaded`);
+            // Continue with your file processing here
+        }
+    });
     try {
         // Read the JSON file
         let data = fs.readFileSync(filePath);
