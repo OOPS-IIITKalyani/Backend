@@ -1,6 +1,6 @@
 const express = require('express');
 
-const { Predictor} = require('/Users/tamaghnachoudhuri/Desktop/Webcode/Backend/src/controllers/predictor.controller.js')
+const { Predictor} = require('../controllers/predictor.controller.js')
 
 const router = express.Router();
 
