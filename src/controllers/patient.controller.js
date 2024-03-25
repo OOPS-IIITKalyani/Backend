@@ -87,7 +87,7 @@ const loginPatient = asyncHandler(async (req, res) =>{
     //send cookie
 
     const {name,PhoneNumber,password} = req.body
-   
+
 
     if (!name || !PhoneNumber) {
         throw new ApiError(400, "name or email is required")
