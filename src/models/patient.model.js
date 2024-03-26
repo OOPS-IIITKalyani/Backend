@@ -90,8 +90,7 @@ const patientSchema = new Schema(
             trim: true,
         },
         symptoms: {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: 'Symptom'
+            type: [String]
 
         },
         password: {
