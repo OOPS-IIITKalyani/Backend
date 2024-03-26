@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 // Define the schema
-const ExisitingCondition = new Schema({
+const report= new Schema({
   DiseaseName: {
     type: String,
     required: true
@@ -35,6 +35,6 @@ const ExisitingCondition = new Schema({
 });
 
 // Create the model
-const Diagnosis = mongoose.model('Diagnosis', diagnosisSchema);
+const Report= mongoose.model('Report', report);
 
-module.exports = Diagnosis;
+module.exports = Report;
