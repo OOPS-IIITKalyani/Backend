@@ -12,6 +12,7 @@ const Predictor = asyncHandler(async (req, res,) => {
             throw new ApiError(400,'User symptoms and age are required');
         }
         const result = analyzeUserSymptoms(userSymptoms, age);
+        
         res.status(200).json(result);
     } catch (error) {
         throw new ApiError(500, "Something went wrong while analyzing user symptoms")
