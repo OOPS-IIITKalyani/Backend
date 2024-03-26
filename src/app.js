@@ -20,7 +20,7 @@ const patientrouter = require("./routes/patient.routes.js")
 const healthcheckRouter = require("./routes/healthcheck.routes.js")
 const predictionRouter = require("./routes/predictor.routes.js")
 const doctorRouter = require("./routes/doctor.routes.js")
-const Healthworker = require("./models/healthworker.model.js")
+const Healthworker = require("./routes/healthworker.routes.js")
 const reportRouter = require("./routes/report.routes.js")
 //routes declaration
 app.use("/api/v1/healthcheck", healthcheckRouter)
