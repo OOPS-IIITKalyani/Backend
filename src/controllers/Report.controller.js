@@ -36,3 +36,17 @@ const addReport = asyncHandler(async (req, res) => {
 
     return res.status(201).json(new ApiResponse(200, createdReport, "Report added successfully"));
 } );
+
+const getReports = asyncHandler(async (req, res) => {
+    const reports = await Report.find();
+    res.status(200).json(new ApiResponse(200, reports, "Reports fetched successfully"));
+} );
+
+const getReport = asyncHandler(async (req, res) => {
+    const report = await Report.findById(req.params.id);
+    if (!report) {
+        throw new ApiError(404, "Report not found");
+    }
+    res.status(200).json(new ApiResponse(200, report, "Report fetched successfully"));
+});
+
