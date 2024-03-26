@@ -3,3 +3,6 @@ Report
 - write the endpoint
 - add stuff to check if it works 
 - postman testing
+
+
+also change the percentage to a strig with levels
