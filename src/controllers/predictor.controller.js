@@ -8,7 +8,17 @@ const Predictor = asyncHandler(async (req, res,) => {
     try {
         const { userSymptoms, age ,patientData} = req.body;
         const { name, gender, phoneNumber } = patientData;
-         const patient= await Patient.create(patientData)
+
+         const patient= await Patient.create({name, gender, phoneNumber})
+         const createdPatient = await Patient.findById(patient._id).select(
+            "-password -refreshToken"
+        )
+        if (!createdPatient) {
+            throw new ApiError(500, "Something went wrong while registering the Patient")
+        }
+        console.log(createdPatient);
+        console.log(patientData);
+        console.log(userSymptoms);
         if (!userSymptoms || !age) {
             throw new ApiError(400,'User symptoms and age are required');
         }

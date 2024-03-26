@@ -4,7 +4,8 @@ const ApiResponse = require("../utils/ApiResponse");
 const jwt = require("jsonwebtoken");
 
 const Report = require("../models/Report.model");
-
+const Patientmod = require("../models/patient.model");
+const Doctormod = require("../models/doctor.model");
 
 const addReport = asyncHandler(async (req, res) => {
     const { DiseaseName, Symptoms, DateOfdiagnose, Doctor, Patient, medicines, Comments } = req.body;
@@ -37,8 +38,22 @@ const addReport = asyncHandler(async (req, res) => {
     if (!createdReport) {
         throw new ApiError(500, "Something went wrong while adding the report");
     }
+    const patientId = createdReport.Patient;
+    const doctorId = createdReport.Doctor;
+    const patientinfo = await Patientmod.findById(patientId).select(
+        "-password -refreshToken"
+    );
 
-    return res.status(201).json(new ApiResponse(200, createdReport, "Report added successfully"));
+    const doctorinfo = await Doctormod.findById(doctorId).select(
+        "-password -refreshToken"
+    );
+    if (!patientinfo || !doctorinfo) {
+        throw new ApiError(404, "Patient or Doctor not found");
+    }
+    return res.status(201).json(new ApiResponse(200, {createdReport,
+        patientInfo: patientinfo,
+    doctorInfo: doctorinfo
+    }, "Report added successfully"));
 } );
 
 const getReports = asyncHandler(async (req, res) => {
