@@ -94,8 +94,7 @@ const patientSchema = new Schema(
 
         },
         password: {
-            type: String,
-            required: [true, 'Password is required']
+            type: String
         },
         refreshToken: {
             type: String

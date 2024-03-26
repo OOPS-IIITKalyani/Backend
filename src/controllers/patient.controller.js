@@ -31,9 +31,6 @@ const registerPatient = asyncHandler( async (req, res) => {
     // remove password and refresh token field from response
     // check for user creation
     // return res
-
-
-
 const { name, PhoneNumber, gender, password } = req.body;
 console.log("Received request body:", req.body);
 const requiredFields = ['name', 'PhoneNumber', 'gender', 'password'];
@@ -54,7 +51,7 @@ if (missingFields.length > 0) {
     if (existedPatient) {
         throw new ApiError(409, "Patient with PhoneNumber or name already exists")
     }
-    //console.log(req.files);
+
 
    
    

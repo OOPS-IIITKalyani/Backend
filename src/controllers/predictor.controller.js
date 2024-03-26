@@ -2,12 +2,13 @@ const { analyzeUserSymptoms} = require('../controllers/Predictor/predictor.Analy
 const asyncHandler= require("../utils/asyncHandler")
 const ApiError = require("../utils/ApiError")
 const ApiResponse = require("../utils/ApiResponse")
-
+const  Patient  = require("../models/patient.model")
 
 const Predictor = asyncHandler(async (req, res,) => {
     try {
-        const { userSymptoms, age } = req.body;
-
+        const { userSymptoms, age ,patientData} = req.body;
+        const { name, gender, phoneNumber } = patientData;
+         const patient= await Patient.create(patientData)
         if (!userSymptoms || !age) {
             throw new ApiError(400,'User symptoms and age are required');
         }
