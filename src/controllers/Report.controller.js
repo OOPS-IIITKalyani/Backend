@@ -3,37 +3,8 @@ const ApiError = require("../utils/ApiError");
 const ApiResponse = require("../utils/ApiResponse");
 const jwt = require("jsonwebtoken");
 
+const Report = require("../models/Report.model");
 
-//add a function to add a report with thi schema
-//  DiseaseName: {
-//     type: String,
-//     required: true
-//   },
-//   Symptoms: {
-//     type: [String],
-//     required: true
-//   },
-//   DateOfdiagnose: {
-//     type: Date,
-//     required: true
-//   },
-//   Doctor: {
-//     type: Schema.Types.ObjectId,
-//     ref: 'Doctor',
-//     required: true
-//   },
-//   Patient: {
-//     type: Schema.Types.ObjectId,
-//     ref: 'Patient',
-//     required: true
-//   },
-//   medicines: {
-//     type: [String],
-//     required: true
-//   },
-//   Comments: {
-//     type: String
-//   }
 
 const addReport = asyncHandler(async (req, res) => {
     const { DiseaseName, Symptoms, DateOfdiagnose, Doctor, Patient, medicines, Comments } = req.body;
