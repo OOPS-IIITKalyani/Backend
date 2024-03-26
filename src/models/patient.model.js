@@ -51,7 +51,7 @@ const patientSchema = new Schema(
             trim: true, 
             unique: true,
         },
-        PhoneNumber: {
+        phoneNumber: {
             type: String,
             required: true,
             unique: true,
