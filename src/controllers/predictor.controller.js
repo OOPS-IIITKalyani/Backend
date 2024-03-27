@@ -1,32 +1,61 @@
-const { analyzeUserSymptoms} = require('../controllers/Predictor/predictor.Analysiser');
-const asyncHandler= require("../utils/asyncHandler")
+const { analyzeUserSymptoms } = require('../controllers/Predictor/predictor.Analysiser');
+const asyncHandler = require("../utils/asyncHandler")
 const ApiError = require("../utils/ApiError")
 const ApiResponse = require("../utils/ApiResponse")
-const  Patient  = require("../models/patient.model")
+const Patient = require("../models/patient.model")
+const { addReport } = require('../controllers/Report.controller');
+const Report = require("../models/Report.model")
 
 const Predictor = asyncHandler(async (req, res,) => {
     try {
-        const { userSymptoms, age ,patientData} = req.body;
+        const { userSymptoms, age, patientData } = req.body;
+        console.log(req.body);
         const { name, gender, phoneNumber } = patientData;
+        const dateOfDiagnosis = new Date().toISOString();
 
-         const patient= await Patient.create({name, gender, phoneNumber})
-         const createdPatient = await Patient.findById(patient._id).select(
-            "-password -refreshToken"
-        )
-        if (!createdPatient) {
-            throw new ApiError(500, "Something went wrong while registering the Patient")
+        // Check if patient already exists
+        const patient = await Patient.findOne({
+            $or: [{ name }, { phoneNumber }]
+        });
+        if (!patient) {
+            const newPatient = await Patient.create({ name, gender, phoneNumber })
+            patient = await Patient.findById(newPatient._id).select(
+                "-password -refreshToken"
+            )
+            if (!patient) {
+                throw new ApiError(500, "Something went wrong while registering the Patient")
+            }
+            console.log(patient);
         }
-        console.log(createdPatient);
         console.log(patientData);
         console.log(userSymptoms);
         if (!userSymptoms || !age) {
-            throw new ApiError(400,'User symptoms and age are required');
+            throw new ApiError(400, 'User symptoms and age are required');
         }
         const result = analyzeUserSymptoms(userSymptoms, age);
-        
+        console.log(result);
+        if (!result) {
+            throw new ApiError(500, "Something went wrong while analyzing user symptoms")
+        }
+        const patientId = patient._id;
+        const report = await Report.create({
+            symptoms: userSymptoms,
+            prediction: result,
+            dateOfDiagnosis,
+            patientId
+        });
+
+        // Remove sensitive fields from response
+        const createdReport = await Report.findById(report._id).select("-password -refreshToken");
+
+        if (!createdReport) {
+            throw new ApiError(500, "Something went wrong while adding the report");
+        }
+        console.log(createdReport);
+
         res.status(200).json(result);
     } catch (error) {
-        throw new ApiError(500, "Something went wrong while analyzing user symptoms")
+        throw new ApiError(500, error.message)
     }
 });
 
