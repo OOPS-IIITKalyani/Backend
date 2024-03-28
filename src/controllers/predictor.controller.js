@@ -11,13 +11,15 @@ const Predictor = asyncHandler(async (req, res,) => {
         const { userSymptoms, age, patientData } = req.body;
         console.log(req.body);
         const { name, gender, phoneNumber } = patientData;
+        console.log(phoneNumber);
         const dateOfDiagnosis = new Date().toISOString();
 
         // Check if patient already exists
-        const patient = await Patient.findOne({
-            $or: [{ name }, { phoneNumber }]
-        });
+        let patient = await Patient.findOne({phoneNumber}).then((result) => console.log(result));
+        console.log(patient);
+        console.log(!patient);
         if (!patient) {
+            console.log("Creating new patient");
             const newPatient = await Patient.create({ name, gender, phoneNumber })
             patient = await Patient.findById(newPatient._id).select(
                 "-password -refreshToken"
@@ -46,7 +48,7 @@ const Predictor = asyncHandler(async (req, res,) => {
         });
 
         // Remove sensitive fields from response
-        const createdReport = await Report.findById(report._id).select("-password -refreshToken");
+        let createdReport = await Report.findById(report._id).select("-password -refreshToken");
 
         if (!createdReport) {
             throw new ApiError(500, "Something went wrong while adding the report");
